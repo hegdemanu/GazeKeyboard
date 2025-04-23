@@ -216,7 +216,7 @@
   }
   
   // Handle key selection
-  function selectKey(keyChar) {
+  function selectKey(keyChar, showFeedback = false) {
     if (!keyChar) return;
     
     // Special handling for backspace key
@@ -299,7 +299,7 @@
     
     // Animate the progress
     const circle = progressRing.querySelector('circle');
-    circle.style.transition = 'stroke-dashoffset 800ms linear';
+    circle.style.transition = 'stroke-dashoffset 500ms linear'; // Updated from 800ms to 500ms
     setTimeout(() => {
       circle.style.strokeDashoffset = '0';
     }, 50);
@@ -319,7 +319,7 @@
       }
       
       stopGaze();
-    }, 800);
+    }, 500); // Changed from 800ms to 500ms
   }
   
   function stopGaze() {
@@ -371,11 +371,24 @@
       const suggestion = e.target.closest('.suggestion');
       
       if (key) {
-        const keyChar = key.dataset.key;
-        if (keyChar) selectKey(keyChar);
+        // Show progress ring animation to provide visual feedback
+        startGaze(key);
+        
+        // Select the key after the animation completes
+        setTimeout(() => {
+          const keyChar = key.dataset.key;
+          if (keyChar) selectKey(keyChar);
+          stopGaze();
+        }, 500); // Reduced from 800ms to 500ms for faster response
       } else if (suggestion) {
-        const word = suggestion.dataset.suggestion;
-        if (word) selectSuggestion(word);
+        // Show progress ring animation for suggestions too
+        startGaze(suggestion);
+        
+        setTimeout(() => {
+          const word = suggestion.dataset.suggestion;
+          if (word) selectSuggestion(word);
+          stopGaze();
+        }, 500); // Reduced from 800ms to 500ms
       }
     });
   }
@@ -386,12 +399,41 @@
       // Convert key to uppercase for consistency
       const key = e.key.toUpperCase();
       
+      // Find corresponding key element in the keyboard
+      let keyElement = null;
+      document.querySelectorAll('.key').forEach(element => {
+        if (element.dataset.key === key || 
+            (e.key === 'Backspace' && element.dataset.key === '⌫') ||
+            (e.key === ' ' && element.dataset.key === ' ')) {
+          keyElement = element;
+        }
+      });
+      
       // Check if the key is in our keyboard layout
       if (innerRingKeys.includes(key) || consonantKeys.includes(key) || middleRingKeys.includes(key)) {
-        selectKey(key);
+        if (keyElement) {
+          // Show the progress ring on the corresponding key
+          startGaze(keyElement);
+          
+          setTimeout(() => {
+            selectKey(key);
+            stopGaze();
+          }, 500); // Use the same 500ms delay for consistency
+        } else {
+          selectKey(key);
+        }
         e.preventDefault();
       } else if (e.key === 'Backspace') {
-        selectKey('⌫');
+        if (keyElement) {
+          startGaze(keyElement);
+          
+          setTimeout(() => {
+            selectKey('⌫');
+            stopGaze();
+          }, 500);
+        } else {
+          selectKey('⌫');
+        }
         e.preventDefault();
       } else if (e.key === ' ') {
         selectKey(' ');
