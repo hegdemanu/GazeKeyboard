@@ -498,8 +498,17 @@
   function initializeWebGazer() {
     // Add variables to help stabilize the gaze
     let lastGazeTime = 0;
-    let debounceDelay = 250; // 250ms debounce to prevent rapid changes between letters
+    let debounceDelay = 500; // 500ms debounce to strongly prevent rapid changes between letters
     let lastTarget = null;
+    let consecutiveGazeCount = 0;
+    let consecutiveGazeThreshold = 3; // Require multiple consecutive detections on the same element
+    let lastTargetPoint = { x: 0, y: 0 };
+    let minimumDistance = 20; // Minimum pixel distance to consider a gaze point different
+    
+    // Function to calculate distance between two points
+    const getDistance = (p1, p2) => {
+      return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+    };
     
     webgazer.setGazeListener((data, timestamp) => {
       if (!data) return;
@@ -510,6 +519,22 @@
       
       const { x, y } = data;
       
+      // Check if we've moved significantly from the last point
+      const distance = getDistance({ x, y }, lastTargetPoint);
+      if (distance < minimumDistance && lastTarget) {
+        // We're still looking at approximately the same point, increment counter
+        consecutiveGazeCount++;
+        
+        // If we've been looking at the same target long enough, don't reset timer
+        if (consecutiveGazeCount >= consecutiveGazeThreshold) {
+          return; // Keep the current target active without resetting
+        }
+      } else {
+        // Looking at a new point, reset counter
+        consecutiveGazeCount = 0;
+        lastTargetPoint = { x, y };
+      }
+      
       // Find the element at gaze point
       const element = document.elementFromPoint(x, y);
       if (!element) return;
@@ -518,18 +543,33 @@
       const key = element.closest('.key');
       const suggestion = element.closest('.suggestion');
       
+      // Check if we're still looking at the same target
+      if (key && key === lastTarget) {
+        consecutiveGazeCount++;
+        return; // Keep gazing at the current target
+      } else if (suggestion && suggestion === lastTarget) {
+        consecutiveGazeCount++;
+        return; // Keep gazing at the current target
+      }
+      
+      // We're looking at a new target
+      // Stop the current gaze
+      stopGaze();
+      
       // Don't switch targets too rapidly
-      if (key && key !== lastTarget) {
+      if (key) {
         lastTarget = key;
         lastGazeTime = now;
+        consecutiveGazeCount = 1;
         startGaze(key);
-      } else if (suggestion && suggestion !== lastTarget) {
+      } else if (suggestion) {
         lastTarget = suggestion;
         lastGazeTime = now;
+        consecutiveGazeCount = 1;
         startGaze(suggestion);
-      } else if (!key && !suggestion) {
+      } else {
         lastTarget = null;
-        stopGaze();
+        consecutiveGazeCount = 0;
       }
     })
     .showVideoPreview(false) // Hide the preview by default
