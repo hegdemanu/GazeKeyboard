@@ -299,7 +299,7 @@
     
     // Animate the progress
     const circle = progressRing.querySelector('circle');
-    circle.style.transition = 'stroke-dashoffset 1000ms linear'; // Updated to 1000ms (1 second)
+    circle.style.transition = 'stroke-dashoffset 400ms linear'; // Updated to 400ms
     setTimeout(() => {
       circle.style.strokeDashoffset = '0';
     }, 50);
@@ -319,7 +319,7 @@
       }
       
       stopGaze();
-    }, 1000); // Changed to 1000ms (1 second)
+    }, 400); // Changed to 400ms
   }
   
   function stopGaze() {
@@ -379,7 +379,7 @@
           const keyChar = key.dataset.key;
           if (keyChar) selectKey(keyChar);
           stopGaze();
-        }, 1000); // Updated to 1000ms (1 second)
+        }, 400); // Updated to 400ms
       } else if (suggestion) {
         // Show progress ring animation for suggestions too
         startGaze(suggestion);
@@ -388,7 +388,7 @@
           const word = suggestion.dataset.suggestion;
           if (word) selectSuggestion(word);
           stopGaze();
-        }, 1000); // Updated to 1000ms (1 second)
+        }, 400); // Updated to 400ms
       }
     });
   }
@@ -418,7 +418,7 @@
           setTimeout(() => {
             selectKey(key);
             stopGaze();
-          }, 1000); // Updated to 1000ms (1 second)
+          }, 400); // Updated to 400ms
         } else {
           selectKey(key);
         }
@@ -430,7 +430,7 @@
           setTimeout(() => {
             selectKey('⌫');
             stopGaze();
-          }, 1000); // Updated to 1000ms (1 second)
+          }, 400); // Updated to 400ms
         } else {
           selectKey('⌫');
         }
@@ -496,8 +496,17 @@
   
   // Initialize WebGazer
   function initializeWebGazer() {
+    // Add variables to help stabilize the gaze
+    let lastGazeTime = 0;
+    let debounceDelay = 250; // 250ms debounce to prevent rapid changes between letters
+    let lastTarget = null;
+    
     webgazer.setGazeListener((data, timestamp) => {
       if (!data) return;
+      
+      const now = Date.now();
+      // Only process gaze points if enough time has passed
+      if (now - lastGazeTime < debounceDelay) return;
       
       const { x, y } = data;
       
@@ -509,11 +518,17 @@
       const key = element.closest('.key');
       const suggestion = element.closest('.suggestion');
       
-      if (key) {
+      // Don't switch targets too rapidly
+      if (key && key !== lastTarget) {
+        lastTarget = key;
+        lastGazeTime = now;
         startGaze(key);
-      } else if (suggestion) {
+      } else if (suggestion && suggestion !== lastTarget) {
+        lastTarget = suggestion;
+        lastGazeTime = now;
         startGaze(suggestion);
-      } else {
+      } else if (!key && !suggestion) {
+        lastTarget = null;
         stopGaze();
       }
     })
