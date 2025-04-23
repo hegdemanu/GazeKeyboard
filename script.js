@@ -299,7 +299,7 @@
     
     // Animate the progress
     const circle = progressRing.querySelector('circle');
-    circle.style.transition = 'stroke-dashoffset 500ms linear'; // Updated from 800ms to 500ms
+    circle.style.transition = 'stroke-dashoffset 1000ms linear'; // Updated to 1000ms (1 second)
     setTimeout(() => {
       circle.style.strokeDashoffset = '0';
     }, 50);
@@ -319,7 +319,7 @@
       }
       
       stopGaze();
-    }, 500); // Changed from 800ms to 500ms
+    }, 1000); // Changed to 1000ms (1 second)
   }
   
   function stopGaze() {
@@ -379,7 +379,7 @@
           const keyChar = key.dataset.key;
           if (keyChar) selectKey(keyChar);
           stopGaze();
-        }, 500); // Reduced from 800ms to 500ms for faster response
+        }, 1000); // Updated to 1000ms (1 second)
       } else if (suggestion) {
         // Show progress ring animation for suggestions too
         startGaze(suggestion);
@@ -388,7 +388,7 @@
           const word = suggestion.dataset.suggestion;
           if (word) selectSuggestion(word);
           stopGaze();
-        }, 500); // Reduced from 800ms to 500ms
+        }, 1000); // Updated to 1000ms (1 second)
       }
     });
   }
@@ -418,7 +418,7 @@
           setTimeout(() => {
             selectKey(key);
             stopGaze();
-          }, 500); // Use the same 500ms delay for consistency
+          }, 1000); // Updated to 1000ms (1 second)
         } else {
           selectKey(key);
         }
@@ -430,7 +430,7 @@
           setTimeout(() => {
             selectKey('⌫');
             stopGaze();
-          }, 500);
+          }, 1000); // Updated to 1000ms (1 second)
         } else {
           selectKey('⌫');
         }
