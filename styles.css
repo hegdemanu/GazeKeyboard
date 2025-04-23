@@ -1,0 +1,274 @@
+/* Base styles and resets */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: #121212; /* Dark mode background for better contrast */
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Main container */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  width: 100%;
+  max-width: 100vw;
+}
+
+/* Status indicator */
+.status-indicator {
+  margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #333333;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  opacity: 0.8;
+  transition: opacity 0.5s ease;
+}
+
+.status-icon {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background-color: #f44336; /* Red by default */
+  margin-right: 0.5rem;
+}
+
+/* Keyboard container */
+.keyboard {
+  position: relative;
+  width: 800px;
+  height: 800px;
+  max-width: 100%;
+  max-height: 80vh;
+  aspect-ratio: 1 / 1;
+  background-color: transparent;
+  border-radius: 50%;
+  border: 1px solid #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ring styles */
+.ring {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.ring1 {
+  width: 70%;
+  height: 70%;
+}
+
+.ring2 {
+  width: 86%;
+  height: 86%;
+}
+
+.ring3 {
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.ring3.visible {
+  opacity: 1;
+}
+
+/* Key styles */
+.key {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #333333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transform: scale(1);
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.key:hover, .key.selected {
+  transform: scale(1.1);
+  background-color: #4A4A4A;
+}
+
+.key span {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* Progress ring */
+.progress-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.progress-ring__circle {
+  transition: stroke-dashoffset 0.8s linear;
+  transform: rotate(-90deg);
+  transform-origin: center;
+}
+
+/* Suggestion styles */
+.suggestion {
+  position: absolute;
+  padding: 0.5rem 1rem;
+  background-color: #9C27B0;
+  background-opacity: 0.8;
+  border-radius: 0.75rem;
+  transform: translate(-50%, -50%);
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.suggestion:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* Output area */
+.output-container {
+  margin-top: 2rem;
+  width: 100%;
+  max-width: 800px;
+}
+
+.output {
+  width: 100%;
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  font-size: 1.25rem;
+  color: white;
+}
+
+.output:focus {
+  outline: none;
+  border-color: #007BFF;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.help-text {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  padding: 0 0.5rem;
+  color: #999;
+  font-size: 0.875rem;
+}
+
+/* Control buttons */
+.controls {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.control-button {
+  padding: 0.5rem 1rem;
+  background-color: #333333;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.control-button:hover {
+  background-color: #4A4A4A;
+}
+
+/* Webcam container */
+.webcam-container {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  width: 160px;
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+  border: 1px solid #333;
+  border-radius: 0.25rem;
+  overflow: hidden;
+}
+
+.webcam-container:hover {
+  opacity: 1;
+}
+
+.webcam-container video {
+  width: 100%;
+}
+
+.webcam-header {
+  padding: 0.5rem;
+  background-color: #1a1a1a;
+  font-size: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toggle-webcam {
+  font-size: 0.75rem;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+}
+
+/* Responsive adjustments */
+@media (max-width: 850px) {
+  .keyboard {
+    width: 90vw;
+    height: 90vw;
+  }
+  
+  .key {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .output-container, .controls {
+    max-width: 90vw;
+  }
+}
+
+@media (max-width: 500px) {
+  .key {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .key span {
+    font-size: 1rem;
+  }
+  
+  .help-text {
+    flex-direction: column;
+    align-items: center;
+  }
+}

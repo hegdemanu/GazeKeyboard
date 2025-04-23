@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <title>Eye-Gaze Circular Keyboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- WebGazer.js for eye tracking -->
+  <script src="https://unpkg.com/webgazer"></script>
+  <!-- 
+    HOW TO USE:
+    1. Grant camera access when prompted
+    2. Look at a key for 800ms to select it
+    3. You can also use mouse hover or keyboard input
+    4. Word suggestions appear in the outer ring
+  -->
+</head>
+<body>
+  <!-- Main application container -->
+  <main class="app-container">
+    <!-- Status indicator for eye tracking -->
+    <div id="status-indicator" class="status-indicator">
+      <span id="status-icon" class="status-icon"></span>
+      <span id="status-text">Initializing eye tracking...</span>
+    </div>
+
+    <!-- Circular keyboard with multiple rings -->
+    <div id="keyboard" class="keyboard">
+      <!-- Inner ring (main letters) -->
+      <div id="ring1" class="ring ring1"></div>
+
+      <!-- Middle ring (numbers, special chars) -->
+      <div id="ring2" class="ring ring2"></div>
+
+      <!-- Outer ring (suggestions) -->
+      <div id="ring3" class="ring ring3"></div>
+    </div>
+
+    <!-- Text output display -->
+    <div class="output-container">
+      <input id="output" readonly class="output" placeholder="Typed text will appear here...">
+      <div class="help-text">
+        <div>Look at a letter for 800ms to select it</div>
+        <div>You can also use mouse or keyboard input</div>
+      </div>
+    </div>
+
+    <!-- Control buttons -->
+    <div class="controls">
+      <button id="clear" class="control-button">Clear Text</button>
+      <button id="space" class="control-button">Space</button>
+      <button id="backspace" class="control-button">Backspace</button>
+    </div>
+  </main>
+
+  <!-- Webcam preview (hidden by default) -->
+  <div id="webcam-container" class="webcam-container">
+    <div class="webcam-header">
+      <span>Camera Feed</span>
+      <button id="toggle-webcam" class="toggle-webcam">Hide</button>
+    </div>
+  </div>
+
+  <!-- Load the JavaScript file at the end -->
+  <script src="script.js"></script>
+</body>
+</html>
