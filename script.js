@@ -219,8 +219,52 @@
   function selectKey(keyChar, showFeedback = false) {
     if (!keyChar) return;
     
+    // Prevent typos with duplicate letters detection
+    const now = Date.now();
+    
+    // Store last 5 selections with timestamps
+    if (!window.recentSelections) {
+      window.recentSelections = [];
+    }
+    
+    if (window.recentSelections.length > 5) {
+      window.recentSelections.shift(); // Remove oldest selection
+    }
+    
+    // Check for duplicate character prevention (same character typed quickly)
+    const lastSelection = window.recentSelections.length ? 
+      window.recentSelections[window.recentSelections.length - 1] : null;
+      
+    if (lastSelection && 
+        lastSelection.char === keyChar && 
+        now - lastSelection.time < 1200) { // 1.2 second threshold for duplicates
+      console.log('Prevented duplicate character:', keyChar);
+      return; // Skip this selection to prevent double typing
+    }
+    
+    // Add current selection to history
+    window.recentSelections.push({
+      char: keyChar,
+      time: now
+    });
+    
     // Special handling for backspace key
     if (keyChar === '⌫') {
+      // If this is a long text, show confirmation on backspace
+      if (output.value.length > 7) {
+        const backspaceKey = Array.from(document.querySelectorAll('.key')).find(
+          el => el.dataset.key === '⌫'
+        );
+        
+        // Show confirmation animation on backspace for long text
+        if (backspaceKey && !backspaceKey.classList.contains('confirmation')) {
+          backspaceKey.classList.add('confirmation');
+          setTimeout(() => {
+            backspaceKey.classList.remove('confirmation');
+          }, 1500);
+        }
+      }
+      
       output.value = output.value.slice(0, -1);
       updateSuggestions();
     } else {
@@ -498,12 +542,13 @@
   function initializeWebGazer() {
     // Add variables to help stabilize the gaze
     let lastGazeTime = 0;
-    let debounceDelay = 500; // 500ms debounce to strongly prevent rapid changes between letters
+    let debounceDelay = 800; // 800ms debounce to very strongly prevent rapid changes between letters
     let lastTarget = null;
     let consecutiveGazeCount = 0;
-    let consecutiveGazeThreshold = 3; // Require multiple consecutive detections on the same element
+    let consecutiveGazeThreshold = 5; // Increased: Require 5 consecutive detections on the same element
     let lastTargetPoint = { x: 0, y: 0 };
-    let minimumDistance = 20; // Minimum pixel distance to consider a gaze point different
+    let minimumDistance = 30; // Increased: 30px minimum distance to consider a gaze point different
+    let recentSelections = []; // Track recent selections to prevent mistyping
     
     // Function to calculate distance between two points
     const getDistance = (p1, p2) => {
