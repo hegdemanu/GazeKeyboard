@@ -1,14 +1,14 @@
 (function() {
   // Configure environment
   const keyboardRadius = 400; // 800px diameter / 2
-  const innerRingRadius = keyboardRadius * 0.30; // Made inner ring smaller for vowels
-  const middleRingRadius = keyboardRadius * 0.43;
-  const outerRingRadius = keyboardRadius * 0.50;
+  const innerRingRadius = keyboardRadius * 0.25; // Inner ring for vowels
+  const middleRingRadius = keyboardRadius * 0.38; // Middle ring for consonants (increased gap)
+  const outerRingRadius = keyboardRadius * 0.51; // Outer ring for numbers/symbols
   
   // Keys configuration
-  const innerRingKeys = "AEIOU ".split(""); // Vowels in the center ring
-  const consonantKeys = "BCDFGHJKLMNPQRSTVWXYZ".split(""); // Consonants for outer rings
-  const middleRingKeys = "1234567890.,?!'-_@#$%&()".split("");
+  const innerRingKeys = "AEIOU⌫".split(""); // Vowels + backspace in the center ring
+  const consonantKeys = "BCDFGHJKLMNPQRSTVWXYZ".split(""); // Consonants for middle ring
+  const middleRingKeys = "1234567890.,?!'-_@#$%&()".split(""); // Numbers and special chars for outer ring
   
   // Dictionary for word suggestions
   const dictionary = {
@@ -141,7 +141,12 @@
       const key = createKey(innerRingKeys[i], innerRingRadius, angle, 1);
       
       // Make vowels more visible
-      if (innerRingKeys[i] !== ' ') {
+      if (innerRingKeys[i] === '⌫') {
+        // Style backspace key
+        key.style.backgroundColor = '#D32F2F'; // Red background
+        key.style.fontSize = '1.3rem';
+      } else {
+        // Style vowels
         key.style.backgroundColor = '#444';
         key.style.fontSize = '1.4rem';
       }
@@ -205,14 +210,20 @@
   function selectKey(keyChar) {
     if (!keyChar) return;
     
-    // Add the character to the output
-    output.value += keyChar;
+    // Special handling for backspace key
+    if (keyChar === '⌫') {
+      output.value = output.value.slice(0, -1);
+      updateSuggestions();
+    } else {
+      // Add the character to the output
+      output.value += keyChar;
+      
+      // Update suggestions based on the current word
+      updateSuggestions();
+    }
     
     // Beep for auditory feedback
     beep();
-    
-    // Update suggestions based on the current word
-    updateSuggestions();
   }
   
   // Handle suggestion selection
@@ -371,8 +382,7 @@
         selectKey(key);
         e.preventDefault();
       } else if (e.key === 'Backspace') {
-        output.value = output.value.slice(0, -1);
-        updateSuggestions();
+        selectKey('⌫');
         e.preventDefault();
       } else if (e.key === ' ') {
         selectKey(' ');
@@ -391,8 +401,7 @@
     });
     
     backspaceBtn.addEventListener('click', () => {
-      output.value = output.value.slice(0, -1);
-      updateSuggestions();
+      selectKey('⌫');
     });
   }
   
