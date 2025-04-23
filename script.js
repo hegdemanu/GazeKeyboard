@@ -4,6 +4,7 @@
   const innerRingRadius = keyboardRadius * 0.25; // Inner ring for vowels
   const middleRingRadius = keyboardRadius * 0.38; // Middle ring for consonants (increased gap)
   const outerRingRadius = keyboardRadius * 0.51; // Outer ring for numbers/symbols
+  const suggestionRingRadius = keyboardRadius * 0.7; // Suggestions ring (increased distance)
   
   // Keys configuration
   const innerRingKeys = "AEIOU⌫".split(""); // Vowels + backspace in the center ring
@@ -185,9 +186,14 @@
     
     // Create suggestion elements
     const suggestionCount = Math.min(suggestions.length, 3);
+    
+    // Use larger spacing for better visibility and to avoid overlapping
     for (let i = 0; i < suggestionCount; i++) {
+      // Calculate angle to position suggestions evenly, starting from top
       const angle = ((2 * Math.PI) / suggestionCount) * i - Math.PI/2;
-      const { x, y } = polarToXY(outerRingRadius, angle);
+      
+      // Use the larger suggestionRingRadius for better spacing
+      const { x, y } = polarToXY(suggestionRingRadius, angle);
       
       const suggestion = document.createElement('div');
       suggestion.classList.add('suggestion');
@@ -197,6 +203,9 @@
       
       suggestion.textContent = suggestions[i];
       suggestion.dataset.suggestion = suggestions[i];
+      
+      // Add index number to suggestions to make selection easier
+      suggestion.dataset.index = i + 1;
       
       suggestion.addEventListener('click', () => {
         selectSuggestion(suggestions[i]);

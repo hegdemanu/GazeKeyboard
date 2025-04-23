@@ -140,17 +140,26 @@ body {
 /* Suggestion styles */
 .suggestion {
   position: absolute;
-  padding: 0.5rem 1rem;
-  background-color: #9C27B0;
-  background-opacity: 0.8;
+  padding: 0.75rem 1.25rem;
+  background-color: rgba(156, 39, 176, 0.9);
   border-radius: 0.75rem;
   transform: translate(-50%, -50%);
   transition: transform 0.3s ease;
   cursor: pointer;
+  min-width: 120px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  white-space: nowrap;
+  z-index: 5;
+  letter-spacing: 0.5px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .suggestion:hover {
   transform: translate(-50%, -50%) scale(1.1);
+  background-color: rgba(156, 39, 176, 1);
 }
 
 /* Output area */
