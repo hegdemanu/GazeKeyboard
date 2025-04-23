@@ -105,17 +105,23 @@ body {
   justify-content: center;
   cursor: pointer;
   transform: scale(1);
-  transition: transform 0.3s ease, background-color 0.3s ease;
+  transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+  z-index: 1;
+  border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 .key:hover, .key.selected {
   transform: scale(1.1);
   background-color: #4A4A4A;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  z-index: 2;
 }
 
 .key span {
   font-size: 1.25rem;
   font-weight: 600;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.5px;
 }
 
 /* Progress ring */

@@ -1,12 +1,13 @@
 (function() {
   // Configure environment
   const keyboardRadius = 400; // 800px diameter / 2
-  const innerRingRadius = keyboardRadius * 0.35;
+  const innerRingRadius = keyboardRadius * 0.30; // Made inner ring smaller for vowels
   const middleRingRadius = keyboardRadius * 0.43;
   const outerRingRadius = keyboardRadius * 0.50;
   
   // Keys configuration
-  const innerRingKeys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ ".split("");
+  const innerRingKeys = "AEIOU ".split(""); // Vowels in the center ring
+  const consonantKeys = "BCDFGHJKLMNPQRSTVWXYZ".split(""); // Consonants for outer rings
   const middleRingKeys = "1234567890.,?!'-_@#$%&()".split("");
   
   // Dictionary for word suggestions
@@ -133,18 +134,35 @@
   
   // Create keys in rings
   function createRings() {
-    // Create inner ring keys
+    // Create inner ring keys (vowels)
     const innerKeysCount = innerRingKeys.length;
     for (let i = 0; i < innerKeysCount; i++) {
       const angle = ((2 * Math.PI) / innerKeysCount) * i - Math.PI/2;
-      createKey(innerRingKeys[i], innerRingRadius, angle, 1);
+      const key = createKey(innerRingKeys[i], innerRingRadius, angle, 1);
+      
+      // Make vowels more visible
+      if (innerRingKeys[i] !== ' ') {
+        key.style.backgroundColor = '#444';
+        key.style.fontSize = '1.4rem';
+      }
     }
     
-    // Create middle ring keys
-    const middleKeysCount = middleRingKeys.length;
-    for (let i = 0; i < middleKeysCount; i++) {
-      const angle = ((2 * Math.PI) / middleKeysCount) * i - Math.PI/2;
-      createKey(middleRingKeys[i], middleRingRadius, angle, 2);
+    // Create consonant keys in the middle ring
+    const consonantCount = consonantKeys.length;
+    const consonantCircumference = 2 * Math.PI;
+    const spacing = consonantCircumference / consonantCount;
+    
+    for (let i = 0; i < consonantCount; i++) {
+      const angle = spacing * i - Math.PI/2;
+      const key = createKey(consonantKeys[i], middleRingRadius, angle, 2);
+      key.style.fontSize = '1.25rem';
+    }
+    
+    // Create number and special character keys in outer ring
+    const specialKeysCount = middleRingKeys.length;
+    for (let i = 0; i < specialKeysCount; i++) {
+      const angle = ((2 * Math.PI) / specialKeysCount) * i - Math.PI/2;
+      const key = createKey(middleRingKeys[i], outerRingRadius, angle, 2);
     }
   }
   
@@ -349,7 +367,7 @@
       const key = e.key.toUpperCase();
       
       // Check if the key is in our keyboard layout
-      if (innerRingKeys.includes(key) || middleRingKeys.includes(key)) {
+      if (innerRingKeys.includes(key) || consonantKeys.includes(key) || middleRingKeys.includes(key)) {
         selectKey(key);
         e.preventDefault();
       } else if (e.key === 'Backspace') {
